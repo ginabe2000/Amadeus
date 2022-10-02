@@ -4,11 +4,16 @@ from datetime import datetime
 import json, os, string, sys, threading, logging, time, re, random
 import openai
 
+##########
+#Settings#
+##########
+
+#You can also set these environment variables for docker
+
 #OpenAI API key
 aienv = os.getenv('OPENAI_KEY')
 if aienv == None:
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    openai.api_key = "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"
+    openai.api_key = "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"
 else:
     openai.api_key = aienv
 print(aienv)
@@ -38,6 +43,7 @@ qcache = None
 chat_log = None
 botname = 'Daiki_Aomine_Bots'
 username = '@Fred_Aomine_Bot'
+
 # Max chat log length (A token is about 4 letters and max tokens is 2048)
 max = int(3000)
 
@@ -67,18 +73,18 @@ def start(bot, update):
         chat_log = None
         cache = None
         qcache = None
-        botname = 'Daiki_Aomine_Bots'
-        username = '@Fred_Aomine_Bot'
-        update.message.reply_text('Hi')
+        botname = 'Ai'
+        username = 'Human'
+        update.message.reply_text('Send a message!')
         return 
     else:
-        update.message.reply_text('I am currently talking to someone else. Can you please wait ' + left + ' seconds?')
+        update.message.reply_text('Bot is currently in use, make sure to set your settings when their timer runs down. ' + left + ' seconds.')
         return
 
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('[/reset] resets the conversation,\n [/retry] retries the last output,\n [/username name] sets your name to the bot, default is "Human",\n [/botname name] sets the bots character name, default is "AI"')
+    update.message.reply_text('[/reset] resets the conversation, [/retry] retries the last output, [/username name] sets your name to the bot, default is "Human", [/botname name] sets the bots character name, default is "AI"')
 
 
 def reset(bot, update):
@@ -102,12 +108,12 @@ def reset(bot, update):
         chat_log = None
         cache = None
         qcache = None
-        botname = 'Makise Kurisu'
-        username = 'thewickedkarma'
+        botname = 'Daiki_Aomine_Bots'
+        username = '@Fred_Aomine_Bot'
         update.message.reply_text('Bot has been reset, send a message!')
         return 
     else:
-        update.message.reply_text('I am currently talking to someone else. Can you please wait ' + left + ' seconds?')
+        update.message.reply_text('Bot is currently in use, make sure to set your settings when their timer runs down. ' + left + ' seconds.')
         return
 
 
@@ -129,12 +135,13 @@ def retry(bot, update):
         chat_log = None
         cache = None
         qcache = None
-        botname = 'Daiki_Aomine_Bots'
-        username = '@Fred_Aomine_Bot'
+        botname = 'Ai'
+        username = 'Human'
+
         update.message.reply_text('Send a message!')
         return 
     else:
-        update.message.reply_text('I am currently talking to someone else. Can you please wait ' + left + ' seconds?')
+        update.message.reply_text('Bot is currently in use, make sure to set your settings when their timer runs down. ' + left + ' seconds.')
         return
 
 def runn(bot, update):
@@ -163,7 +170,7 @@ def runn(bot, update):
             update.message.reply_text(e)
         return
     else:
-        comput = threading.Thread(target=interact, args=(bot, update, botname, username, new,))
+        comput = threading.Thread(target=wait, args=(bot, update, botname, username, new,))
         comput.start()
 
 
@@ -190,13 +197,13 @@ def wait(bot, update, botname, username, new):
                 cache = None
                 qcache = None
                 user = ""
-                botname = 'Daiki_Aomine_Bots'
-                username = '@Fred_Aomine_Bot'
+                botname = 'Ai'
+                username = 'Human'
                 update.message.reply_text('Timer has run down, bot has been reset to defaults.')
                 running = False
     else:
         left = str(tim)
-        update.message.reply_text('I am currently talking to someone else. Can you please wait ' + left + ' seconds?')
+        update.message.reply_text('Bot is in use, current cooldown is: ' + left + ' seconds.')
 
 
 ################
@@ -221,8 +228,8 @@ def ask(username, botname, question, chat_log=None):
     t = '[' + ampm + '] '
     prompt = f'{chat_log}{t}{username}: {question}\n{t}{botname}:'
     response = completion.create(
-        prompt=prompt, engine="text-davinci-001", stop=['\n'], temperature=0.9,
-        top_p=1, frequency_penalty=0, presence_penalty=0.6, best_of=3,
+        prompt=prompt, engine="davinci", stop=['\n'], temperature=0.9,
+        top_p=1, frequency_penalty=15, presence_penalty=2, best_of=3,
         max_tokens=250)
     answer = response.choices[0].text.strip()
     return answer
@@ -251,7 +258,7 @@ def interact(bot, update, botname, username, new):
             print("Sentiment of input:\n")
             print(vs)
         if vs['neg'] > 1:
-            update.message.reply_text('Can we talk something else?')
+            update.message.reply_text('Input text is not positive. Input text must be of positive sentiment/emotion.')
             return
     if new == True:
         if debug == True:
@@ -280,7 +287,7 @@ def interact(bot, update, botname, username, new):
             print("Sentiment of output:\n")
             print(vs)
         if vs['neg'] > 1:
-            update.message.reply_text('I do not think I could provide you a good answer for this. Use /retry to get positive output.')
+            update.message.reply_text('Output text is not positive. Censoring. Use /retry to get positive output.')
             return
         update.message.reply_text(out)
         chat_log = append_interaction_to_chat_log(username, botname, question, answer, chat_log)
@@ -293,6 +300,9 @@ def interact(bot, update, botname, username, new):
             print(e)
             errstr = str(e)
             update.message.reply_text(errstr)
+#####################
+# End main functions#
+#####################
 
 
 def error(bot, update):
@@ -302,7 +312,9 @@ def error(bot, update):
 
 def main():
     """Start the bot."""
-
+    # Create the Updater and pass it your bot's token.
+    # Make sure to set use_context=True to use the new context based callbacks
+    # Post version 12 this will no longer be necessary
     updater = Updater(tgkey, use_context=False)
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
@@ -317,7 +329,9 @@ def main():
     dp.add_error_handler(error)
     # Start the Bot
     updater.start_polling()
-   
+    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT. This should be used most of the time, since
+    # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
 
 
