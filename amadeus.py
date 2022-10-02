@@ -8,7 +8,7 @@ import openai
 aienv = os.getenv('OPENAI_KEY')
 if aienv == None:
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    openai.api_key = "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"
+    openai.api_key = "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"
 else:
     openai.api_key = aienv
 print(aienv)
@@ -67,8 +67,8 @@ def start(bot, update):
         chat_log = None
         cache = None
         qcache = None
-        botname = 'Makise Kurisu'
-        username = 'thewickedkarma'
+        botname = 'Daiki_Aomine_Bots'
+        username = '@Fred_Aomine_Bot'
         update.message.reply_text('Hi')
         return 
     else:
@@ -94,8 +94,8 @@ def reset(bot, update):
         chat_log = None
         cache = None
         qcache = None
-        botname = 'Makise Kurisu'
-        username = 'thewickedkarma'
+        botname = 'Daiki_Aomine_Bots'
+        username = '@Fred_Aomine_Bot'
         update.message.reply_text('Bot has been reset, send a message!')
         return
     if tim == 1:
@@ -129,8 +129,8 @@ def retry(bot, update):
         chat_log = None
         cache = None
         qcache = None
-        botname = 'Makise Kurisu'
-        username = 'thewickedkarma'
+        botname = 'Daiki_Aomine_Bots'
+        username = '@Fred_Aomine_Bot'
         update.message.reply_text('Send a message!')
         return 
     else:
@@ -190,8 +190,8 @@ def wait(bot, update, botname, username, new):
                 cache = None
                 qcache = None
                 user = ""
-                username = 'thewickedkarma'
-                botname = 'Makise Kurisu'
+                botname = 'Daiki_Aomine_Bots'
+                username = '@Fred_Aomine_Bot'
                 update.message.reply_text('Timer has run down, bot has been reset to defaults.')
                 running = False
     else:
